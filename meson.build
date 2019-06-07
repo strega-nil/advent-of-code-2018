@@ -21,3 +21,4 @@ endif
 subdir('aoc')
 
 subdir('day-1a')
+subdir('day-1b')

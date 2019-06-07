@@ -4,17 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-string get_line(string s) {
-  string ret = {0};
-  ret.end = ret.start = s.start;
-
-  while (ret.end != s.end and *ret.end != '\n') {
-    ++ret.end;
-  }
-
-  return ret;
-}
-
 void do_the_thing(string data) {
   int acc = 0;
   char buffer[32] = {0};

@@ -19,5 +19,5 @@ function run([String] $Day) {
 
   Write-Host
 
-  & ".\build\$dayPath\$dayPath.exe"
+  & ".\build\meson-out\$dayPath.exe"
 }
