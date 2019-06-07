@@ -13,6 +13,7 @@ compiler = meson.get_compiler('c').get_id()
 if compiler == 'msvc'
   add_project_arguments(
     '-wd4204',
+    '-wd4200',
     '-D_CRT_SECURE_NO_WARNINGS',
     language: 'c',
   )

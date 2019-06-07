@@ -5,6 +5,7 @@ aoc = declare_dependency(
     'aoc',
     'src/read.c',
     'src/string.c',
+    'src/dynamic_buffer.c',
     include_directories: aoc_includes,
   ),
   include_directories: aoc_includes,
