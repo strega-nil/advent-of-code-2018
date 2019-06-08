@@ -9,7 +9,7 @@ static char*
 aoc_read_filename(int day, string filename) {
   char* ret = NULL;
 
-  char const* const format = "data-%d/";
+  char const* const format = "data-%02d/";
   size_t const folder_length = snprintf(NULL, 0, format, day);
   size_t const filename_length = string_length(filename);
 

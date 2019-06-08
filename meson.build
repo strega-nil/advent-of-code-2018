@@ -21,5 +21,6 @@ endif
 
 subdir('aoc')
 
-subdir('day-1a')
-subdir('day-1b')
+subdir('day-01a')
+subdir('day-01b')
+subdir('day-02a')

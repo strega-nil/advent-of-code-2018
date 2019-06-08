@@ -1,17 +1,31 @@
-#include <aoc/dynamic_buffer.h>
-#include <aoc/string.h>
 #include <aoc/read.h>
+#include <aoc/set.h>
+#include <aoc/string.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+static int int_compare(void const* lhs_, void const* rhs_) {
+  int lhs = *(int const*)lhs_;
+  int rhs = *(int const*)rhs_;
+
+  if (lhs < rhs) {
+    return -1;
+  } else if (lhs == rhs) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
 void do_the_thing(string const data) {
   int acc = 0;
   char buffer[32] = {0};
 
-  int* freq_buffer = db_new_with_capacity(int, 8);
-  db_push(freq_buffer, 0);
+  set frequencies = set_new(int_compare);
+  {int const tmp = 0; set_insert(frequencies, tmp);}
+  int set_size = 1;
 
   string rest_of_lines = data;
 
@@ -45,18 +59,11 @@ void do_the_thing(string const data) {
       acc += tmp;
     }
 
-    {
-      int const* it;
-      int const* end = db_end(freq_buffer);
-      for (it = freq_buffer; it != end; ++it) {
-        if (acc == *it) {
-          printf("Answer is %d\n", acc);
-          goto success;
-        }
-      }
+    if (set_insert(frequencies, acc)) {
+      printf("Answer is %d\n", acc);
+      goto success;
     }
-
-    db_push(freq_buffer, acc);
+    ++set_size;
 
     continue;
   invalid_format:
@@ -65,7 +72,7 @@ void do_the_thing(string const data) {
   }
 
 success:
-  db_free(freq_buffer);
+  set_free(frequencies);
 }
 
 int main() {
