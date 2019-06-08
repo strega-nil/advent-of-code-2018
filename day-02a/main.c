@@ -6,13 +6,69 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct foo {int x;};
+struct value_of_return {
+  bool has_two;
+  bool has_three;
+};
+
+struct value_of_return value_of(string s) {
+  int buffer[26] = {0};
+
+  struct value_of_return ret = {0};
+
+  for (char const* it = s.start; it != s.end; ++it) {
+    int index = *it - 'a';
+    if (0 <= index and index < 26) {
+      ++buffer[index];
+    } else {
+      fprintf(
+        stderr,
+        "invalid string: %.*s",
+        (int)string_length(s),
+        s.start
+      );
+      return ret;
+    }
+  }
+
+  for (int const* it = &buffer[0]; it != &buffer[26]; ++it) {
+    if (*it == 3) {
+      ret.has_three = true;
+    }
+    if (*it == 2) {
+      ret.has_two = true;
+    }
+  }
+
+  return ret;
+}
+
+void do_the_thing(string data) {
+  struct get_line_return line = {0};
+  line.rest = data;
+
+  int num_twos = 0;
+  int num_threes = 0;
+
+  for (;;) {
+    line = get_line(line.rest);
+
+    struct value_of_return v = value_of(line.line);
+
+    num_twos += v.has_two;
+    num_threes += v.has_three;
+
+    if (line.rest.start == line.rest.end) {
+      printf("Answer is %d\n", num_twos * num_threes);
+      break;
+    }
+  }
+}
 
 int main() {
-  //string data = aoc_read(2, S("input.txt"));
+  string data = aoc_read(2, S("input.txt"));
 
-  void* x = &(struct foo){0};
-  (void)x;
+  do_the_thing(data);
 
   return 0;
 }

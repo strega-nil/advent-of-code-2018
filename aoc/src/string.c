@@ -41,13 +41,24 @@ string string_of_cstring(char const* s) {
   return ret;
 }
 
-string get_line(string s) {
-  string ret = {0};
-  ret.end = ret.start = s.start;
+struct get_line_return get_line(string s) {
+  string line = {0};
+  line.end = line.start = s.start;
 
-  while (ret.end != s.end and *ret.end != '\n') {
-    ++ret.end;
+  while (line.end != s.end and *line.end != '\n') {
+    ++line.end;
   }
+
+  if (line.end == s.end) {
+    s.start = line.end;
+  } else {
+    s.start = line.end + 1;
+  }
+
+  struct get_line_return ret = {0};
+
+  ret.line = line;
+  ret.rest = s;
 
   return ret;
 }

@@ -27,17 +27,16 @@ void do_the_thing(string const data) {
   {int const tmp = 0; set_insert(frequencies, tmp);}
   int set_size = 1;
 
-  string rest_of_lines = data;
+  struct get_line_return line = {0};
+  line.rest = data;
 
   for (;;) {
-    string const line = get_line(rest_of_lines);
-    size_t const length = string_length(line);
+    line = get_line(line.rest);
+    size_t const length = string_length(line.line);
 
-    if (line.end == data.end) {
+    if (line.rest.start == line.rest.end) {
       // start over from the beginning
-      rest_of_lines.start = data.start;
-    } else {
-      rest_of_lines.start = line.end + 1;
+      line.rest = data;
     }
 
     if (length == 0) {
@@ -48,7 +47,7 @@ void do_the_thing(string const data) {
       goto invalid_format;
     }
 
-    memcpy(buffer, line.start, length);
+    memcpy(buffer, line.line.start, length);
     buffer[length] = '\0';
 
     {
@@ -67,7 +66,12 @@ void do_the_thing(string const data) {
 
     continue;
   invalid_format:
-    fprintf(stderr, "Invalid format: %.*s", (int)length, line.start);
+    fprintf(
+      stderr,
+      "Invalid format: %.*s",
+      (int)length,
+      line.line.start
+    );
     return;
   }
 

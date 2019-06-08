@@ -4,36 +4,45 @@
 #include <stdio.h>
 #include <string.h>
 
-void do_the_thing(string data) {
+void do_the_thing(string const data) {
   int acc = 0;
   char buffer[32] = {0};
 
+  struct get_line_return line = {0};
+  line.rest = data;
+
   for (;;) {
-    string const line = get_line(data);
-    size_t const length = string_length(line);
+    line = get_line(line.rest);
+    size_t const length = string_length(line.line);
 
     if (length > 31) {
-      fprintf(stderr, "Invalid format: %.*s", (int)length, line.start);
-      return;
+      goto invalid_format;
     }
 
-    memcpy(buffer, line.start, length);
+    memcpy(buffer, line.line.start, length);
     buffer[length] = '\0';
 
     int tmp;
     if (sscanf(buffer, "%d", &tmp) < 1) {
-      fprintf(stderr, "Invalid format: %.*s", (int)length, line.start);
-      return;
+      goto invalid_format;
     }
     acc += tmp;
 
-    if (line.end == data.end || line.end + 1 == data.end) {
+    if (line.rest.start == line.rest.end) {
       break;
     }
-    data.start = line.end + 1;
   }
 
   printf("Answer is %d\n", acc);
+  return;
+
+invalid_format:
+  fprintf(
+    stderr,
+    "Invalid format: %.*s",
+    (int)(line.line.end - line.line.start),
+    line.line.start
+  );
 }
 
 int main() {
