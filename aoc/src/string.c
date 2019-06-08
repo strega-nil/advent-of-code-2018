@@ -3,10 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-size_t string_length(string s) {
-  return s.end - s.start;
-}
-
 char* string_to_cstring(string s) {
   size_t length = s.end - s.start;
   char* ret = malloc(length + 1);

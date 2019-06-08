@@ -21,5 +21,6 @@ struct get_line_return {
 struct get_line_return get_line(string s);
 
 #define S(...) string_of_cstring(__VA_ARGS__)
+#define string_length(s) ((size_t)((s).end - (s).start))
 
 #endif // AOC_STRING_H
