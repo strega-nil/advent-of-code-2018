@@ -20,6 +20,14 @@ struct get_line_return {
 
 struct get_line_return get_line(string s);
 
+struct lines_iterator {
+  string current;
+  string rest;
+};
+
+struct lines_iterator lines_iterator_new(string s);
+void lines_iterator_next(struct lines_iterator* it);
+
 #define S(...) string_of_cstring(__VA_ARGS__)
 #define string_length(s) ((size_t)((s).end - (s).start))
 

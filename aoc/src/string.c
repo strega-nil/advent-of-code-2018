@@ -59,3 +59,15 @@ struct get_line_return get_line(string s) {
   return ret;
 }
 
+struct lines_iterator lines_iterator_new(string s) {
+  struct lines_iterator ret = {0};
+  ret.rest = s;
+
+  return ret;
+}
+
+void lines_iterator_next(struct lines_iterator* it) {
+  struct get_line_return gl = get_line(it->rest);
+  it->current = gl.line;
+  it->rest = gl.rest;
+}
