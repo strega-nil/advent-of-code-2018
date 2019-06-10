@@ -44,16 +44,16 @@ struct value_of_return value_of(string s) {
 }
 
 void do_the_thing(string data) {
-  struct get_line_return line = {0};
+  struct string_split line = {0};
   line.rest = data;
 
   int num_twos = 0;
   int num_threes = 0;
 
   for (;;) {
-    line = get_line(line.rest);
+    line = string_split_at(line.rest, '\n');
 
-    struct value_of_return v = value_of(line.line);
+    struct value_of_return v = value_of(line.first);
 
     num_twos += v.has_two;
     num_threes += v.has_three;

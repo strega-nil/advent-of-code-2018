@@ -8,18 +8,18 @@ void do_the_thing(string const data) {
   int acc = 0;
   char buffer[32] = {0};
 
-  struct get_line_return line = {0};
+  struct string_split line = {0};
   line.rest = data;
 
   for (;;) {
-    line = get_line(line.rest);
-    size_t const length = string_length(line.line);
+    line = string_split_at(line.rest, '\n');
+    size_t const length = string_length(line.first);
 
     if (length > 31) {
       goto invalid_format;
     }
 
-    memcpy(buffer, line.line.start, length);
+    memcpy(buffer, line.first.start, length);
     buffer[length] = '\0';
 
     int tmp;
@@ -40,8 +40,8 @@ invalid_format:
   fprintf(
     stderr,
     "Invalid format: %.*s",
-    (int)(line.line.end - line.line.start),
-    line.line.start
+    (int)(line.first.end - line.first.start),
+    line.first.start
   );
 }
 

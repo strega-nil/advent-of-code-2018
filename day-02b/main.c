@@ -44,18 +44,18 @@ void find_solution(string s1, string s2) {
 }
 
 void do_the_thing(string data) {
-  struct get_line_return line = {0};
+  struct string_split line = {0};
   line.rest = data;
 
   string* line_buffer = db_new(string);
 
   for (;;) {
-    line = get_line(line.rest);
+    line = string_split_at(line.rest, '\n');
 
     if (line.rest.start == line.rest.end) {
       break;
     }
-    if (line.line.start == line.line.end) {
+    if (line.first.start == line.first.end) {
       continue;
     }
 
@@ -64,21 +64,21 @@ void do_the_thing(string data) {
       it != db_end(line_buffer);
       ++it
     ) {
-      if (close(line.line, *it)) {
+      if (close(line.first, *it)) {
         printf("found the strings!\n");
         printf("s1: %.*s\n", (int)string_length(*it), it->start);
         printf(
           "s2: %.*s\n",
-          (int)string_length(line.line),
-          line.line.start
+          (int)string_length(line.first),
+          line.first.start
         );
 
-        find_solution(line.line, *it);
+        find_solution(line.first, *it);
         return;
       }
     }
 
-    db_push(line_buffer, line.line);
+    db_push(line_buffer, line.first);
   }
 
   fprintf(stderr, "not found!\n");

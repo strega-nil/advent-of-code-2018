@@ -5,9 +5,10 @@
 #include <string.h>
 
 struct node {
-  struct node *parent;
-  struct node *left;
-  struct node *right;
+  struct node* parent;
+  struct node* left;
+  struct node* right;
+
   int height;
   unsigned char element[];
 };
@@ -228,6 +229,60 @@ static void* aoc_set_search_recursive(
 
 void* _Aoc_set_search(set const* self, void const* element) {
   return aoc_set_search_recursive(self, self->root, element);
+}
+
+void* _Aoc_set_min(set const* self) {
+  struct node* n = self->root;
+  if (n == NULL) {
+    return NULL;
+  }
+
+  for (;;) {
+    if (n->left) {
+      n = n->left;
+    } else {
+      return &n->element;
+    }
+  }
+}
+
+void* _Aoc_set_max(set const* self) {
+  struct node* n = self->root;
+  if (n == NULL) {
+    return NULL;
+  }
+
+  for (;;) {
+    if (n->right) {
+      n = n->right;
+    } else {
+      return &n->element;
+    }
+  }
+}
+
+static void for_each_recursive(
+  struct node* n,
+  for_each_t* f,
+  void* thunk
+) {
+  for (;;) {
+    if (not n) {
+      return;
+    }
+
+    for_each_recursive(n->left, f, thunk);
+    f(&n->element, thunk);
+    n = n->right;
+  }
+}
+
+void _Aoc_set_for_each(
+  set const* self,
+  for_each_t* f,
+  void* thunk
+) {
+  for_each_recursive(self->root, f, thunk);
 }
 
 static void free_subtree(struct node* node) {
