@@ -100,7 +100,6 @@ void do_the_thing(string const data) {
 
 int main() {
   string data = aoc_read(3, S("input.txt"));
-
   do_the_thing(data);
 
   return 0;

@@ -67,7 +67,6 @@ void do_the_thing(string data) {
 
 int main() {
   string data = aoc_read(2, S("input.txt"));
-
   do_the_thing(data);
 
   return 0;

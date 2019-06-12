@@ -13,6 +13,8 @@ size_t string_length(string s);
 char* string_to_cstring(string s);
 string string_of_cstring(char const* s);
 
+void string_free(string s);
+
 struct string_split {
   string first;
   string rest;

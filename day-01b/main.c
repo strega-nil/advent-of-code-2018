@@ -25,7 +25,6 @@ void do_the_thing(string const data) {
 
   set frequencies = set_new(int_compare);
   {int const tmp = 0; set_insert(frequencies, tmp);}
-  int set_size = 1;
 
   struct string_split line = {0};
   line.rest = data;
@@ -44,7 +43,8 @@ void do_the_thing(string const data) {
     }
 
     if (length > 31) {
-      goto invalid_format;
+      fprintf(stderr, "line is too long (%zu)\n", length);
+      goto end;
     }
 
     memcpy(buffer, line.first.start, length);
@@ -53,36 +53,25 @@ void do_the_thing(string const data) {
     {
       int tmp;
       if (sscanf(buffer, "%d", &tmp) < 1) {
-        goto invalid_format;
+        fprintf(stderr, "line doesn't follow format: %s\n", buffer);
+        goto end;
       }
       acc += tmp;
     }
 
     if (set_insert(frequencies, acc)) {
       printf("Answer is %d\n", acc);
-      goto success;
+      goto end;
     }
-    ++set_size;
-
-    continue;
-  invalid_format:
-    fprintf(
-      stderr,
-      "Invalid format: %.*s",
-      (int)length,
-      line.first.start
-    );
-    return;
   }
 
-success:
+end:
   set_free(frequencies);
 }
 
 int main() {
   string data = aoc_read(1, S("input.txt"));
   do_the_thing(data);
-  free(data.start);
 
   return 0;
 }

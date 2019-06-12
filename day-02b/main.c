@@ -12,14 +12,13 @@ bool close(string s1, string s2) {
     return false;
   }
 
-  int differences = 0;
+  bool found_difference = false;
   for (size_t idx = 0; idx < length; ++idx) {
     if (s1.start[idx] != s2.start[idx]) {
-      if (differences) {
+      if (found_difference) {
         return false;
-      } else {
-        ++differences;
       }
+      found_difference = true;
     }
   }
 
@@ -89,7 +88,6 @@ void do_the_thing(string data) {
 
 int main() {
   string data = aoc_read(2, S("input.txt"));
-
   do_the_thing(data);
 
   return 0;

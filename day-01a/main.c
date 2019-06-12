@@ -16,7 +16,8 @@ void do_the_thing(string const data) {
     size_t const length = string_length(line.first);
 
     if (length > 31) {
-      goto invalid_format;
+      fprintf(stderr, "line is too long (%zu)\n", length);
+      return;
     }
 
     memcpy(buffer, line.first.start, length);
@@ -24,7 +25,8 @@ void do_the_thing(string const data) {
 
     int tmp;
     if (sscanf(buffer, "%d", &tmp) < 1) {
-      goto invalid_format;
+      fprintf(stderr, "line doesn't follow format: %s\n", buffer);
+      return;
     }
     acc += tmp;
 
@@ -34,15 +36,6 @@ void do_the_thing(string const data) {
   }
 
   printf("Answer is %d\n", acc);
-  return;
-
-invalid_format:
-  fprintf(
-    stderr,
-    "Invalid format: %.*s",
-    (int)(line.first.end - line.first.start),
-    line.first.start
-  );
 }
 
 int main() {

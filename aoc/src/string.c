@@ -39,6 +39,10 @@ string string_of_cstring(char const* s) {
   return ret;
 }
 
+void string_free(string s) {
+  free(s.start);
+}
+
 struct string_split string_split_at(string s, char ch) {
   string first = {0};
   first.end = first.start = s.start;
