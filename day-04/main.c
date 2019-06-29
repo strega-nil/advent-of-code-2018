@@ -62,7 +62,10 @@ static int data_entry_compare(void const* lhs_, void const* rhs_) {
 }
 
 struct data_entry parse_data_entry(string line) {
-  struct data_entry ret = {ENTRY_INVALID, -1};
+  struct data_entry ret = {0};
+  ret.kind = ENTRY_INVALID;
+  ret.guard_id = -1;
+
   char buffer[64] = {0};
 
   if (line.start == line.end) {
@@ -140,17 +143,13 @@ static int guard_compare(void const* lhs_, void const* rhs_) {
 struct data_entry* get_entries(string data) {
   struct data_entry* entries = db_new(struct data_entry);
 
-  {
-    struct lines_iterator it = lines_iterator_new(data);
-    while (it.rest.start != it.rest.end) {
-      lines_iterator_next(&it);
-      struct data_entry entry = parse_data_entry(it.current);
+  lines_for_each(it, data) {
+    struct data_entry entry = parse_data_entry(it);
 
-      if (entry.kind == ENTRY_INVALID) {
-        continue;
-      }
-      db_push(entries, entry);
+    if (entry.kind == ENTRY_INVALID) {
+      continue;
     }
+    db_push(entries, entry);
   }
 
   qsort(
@@ -163,7 +162,7 @@ struct data_entry* get_entries(string data) {
   return entries;
 }
 
-static void find_max_guard(void* current_, void* max_) {
+static void slept_most_total(void* current_, void* max_) {
   struct guard* current = current_;
   struct guard* max = max_;
 
@@ -172,19 +171,37 @@ static void find_max_guard(void* current_, void* max_) {
   }
 }
 
-struct guard sleepiest_guard(string data) {
+static void slept_most_on_minute(void* current_, void* max_) {
+  struct guard* current = current_;
+  struct guard* max = max_;
+
+  int old_max = 0;
+  int new_max = 0;
+
+  range_for_each(int, i, 0, 60) {
+    if (max->count_of_minutes_asleep[i] > old_max) {
+      old_max = max->count_of_minutes_asleep[i];
+    }
+    if (current->count_of_minutes_asleep[i] > new_max) {
+      new_max = current->count_of_minutes_asleep[i];
+    }
+  }
+
+  if (new_max > old_max) {
+    *max = *current;
+  }
+}
+
+struct guard sleepiest_guard(string data, enum part part) {
   struct data_entry* entries = get_entries(data);
   set guards = set_new(guard_compare);
 
   {
-    struct data_entry const* const end = db_end(entries);
-    struct data_entry const* it = entries;
-
     struct guard tmp_guard = {0};
 
     struct guard* guard = NULL;
     int sleep_time = -1;
-    for (; it != end; ++it) {
+    db_for_each(struct data_entry const, it, entries) {
       if (it->kind == ENTRY_START) {
         tmp_guard.guard_id = it->guard_id;
         guard = set_insert(guards, tmp_guard);
@@ -206,7 +223,7 @@ struct guard sleepiest_guard(string data) {
 
         guard->minutes_asleep += it->minute - sleep_time;
 
-        for (int i = sleep_time; i < it->minute; ++i) {
+        range_for_each(int, i, sleep_time, it->minute) {
           ++guard->count_of_minutes_asleep[i];
         }
         sleep_time = -1;
@@ -225,15 +242,22 @@ struct guard sleepiest_guard(string data) {
   db_free(entries);
 
   struct guard max = {0};
-  set_for_each(guards, find_max_guard, &max);
+  switch (part) {
+    case PART_A:
+      set_for_each(guards, slept_most_total, &max);
+      break;
+    case PART_B:
+      set_for_each(guards, slept_most_on_minute, &max);
+      break;
+  }
 
   set_free(guards);
 
   return max;
 }
 
-void do_the_thing(string data) {
-  struct guard guard = sleepiest_guard(data);
+void do_the_thing(string data, enum part part) {
+  struct guard guard = sleepiest_guard(data, part);
 
   printf("The sleepiest guard is #%d\n", guard.guard_id);
 
@@ -241,7 +265,7 @@ void do_the_thing(string data) {
     int minute = 0;
     int number_of_sleeps = 0;
 
-    for (size_t idx = 0; idx < 60; ++idx) {
+    range_for_each(size_t, idx, 0,  60) {
       if (guard.count_of_minutes_asleep[idx] > number_of_sleeps) {
         minute = (int)idx;
         number_of_sleeps = guard.count_of_minutes_asleep[idx];
@@ -253,10 +277,4 @@ void do_the_thing(string data) {
   }
 }
 
-int main() {
-  string data = aoc_read(4, S("input.txt"));
-
-  do_the_thing(data);
-
-  return 0;
-}
+DEFINE_MAIN(4)

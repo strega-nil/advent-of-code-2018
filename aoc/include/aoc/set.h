@@ -9,6 +9,7 @@ struct node;
 typedef struct set {
   compare_t* cmp;
   struct node* root;
+  size_t size;
 } set;
 
 set _Aoc_set_new(compare_t* cmp);
@@ -36,7 +37,7 @@ void _Aoc_set_for_each(
 #define set_min(self) _Aoc_set_min(&self)
 #define set_max(self) _Aoc_set_max(&self)
 
-// doesn't have a specified order
+// in-order traversal
 #define set_for_each(self, f, thunk) _Aoc_set_for_each(&self, f, thunk)
 
 #define set_free(self) _Aoc_set_free(&self)

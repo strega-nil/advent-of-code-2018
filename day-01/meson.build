@@ -1,5 +1,5 @@
-day_2a = executable(
-  'day-02a',
+day_1 = executable(
+  'day-01',
   'main.c',
   dependencies: aoc,
 )

@@ -65,17 +65,16 @@ struct string_split string_split_at(string s, char ch) {
   return ret;
 }
 
-struct lines_iterator lines_iterator_new(string s) {
-  struct lines_iterator ret = {0};
-  ret.rest = s;
+bool _Aoc_lines_iterator_next(string* current, string* rest) {
+  if (rest->start == rest->end) {
+    return false;
+  }
 
-  return ret;
-}
+  struct string_split split = string_split_at(*rest, '\n');
+  *current = split.first;
+  *rest = split.rest;
 
-void lines_iterator_next(struct lines_iterator* it) {
-  struct string_split split = string_split_at(it->rest, '\n');
-  it->current = split.first;
-  it->rest = split.rest;
+  return true;
 }
 
 int str_scanf(string s, char const* format, ...) {

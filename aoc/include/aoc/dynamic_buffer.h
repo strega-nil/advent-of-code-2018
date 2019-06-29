@@ -25,6 +25,7 @@ void* _Aoc_dynamic_buffer_resize_if_at_capacity(
 void _Aoc_dynamic_buffer_free(void* self);
 
 #define db_length(self) _Aoc_dynamic_buffer_length(self)
+#define db_is_empty(self) (db_length(self) == 0)
 #define db_capacity(self) _Aoc_dynamic_buffer_capacity(self)
 
 #define db_start(self) (&(self)[0])
@@ -47,9 +48,12 @@ void _Aoc_dynamic_buffer_free(void* self);
   )
 
 #define db_pop(self) \
-  (_Aoc_decrement_length(self), (self)[db_length(self)])
+  (_Aoc_dynamic_buffer_decrement_length(self), (self)[db_length(self)])
 
 #define db_set_length(self, length) \
   _Aoc_dynamic_buffer_set_length(self, length)
+
+#define db_for_each(type, name, self) \
+  slice_for_each(type, name, self, db_end(self))
 
 #endif // AOC_DYNAMIC_BUFFER_H

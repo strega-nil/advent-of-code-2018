@@ -6,33 +6,28 @@
 #include <string.h>
 
 static char*
-aoc_read_filename(int day, string filename) {
+aoc_input_filename(int day) {
   char* ret = NULL;
 
-  char const* const format = "data-%02d/";
-  size_t const folder_length = snprintf(NULL, 0, format, day);
-  size_t const filename_length = string_length(filename);
+  char const* const format = "day-%02d/input.txt";
+  size_t const length = snprintf(NULL, 0, format, day);
 
-  if (filename_length == 0) {
-    return NULL;
-  }
-
-  size_t const ret_length = folder_length + filename_length;
-
-  ret = malloc(ret_length + 1);
+  ret = malloc(length + 1);
   if (not ret) {
     return NULL;
   }
 
-  snprintf(ret, folder_length + 1, format, day);
-  memcpy(ret + folder_length, filename.start, filename_length);
-  ret[ret_length] = '\0';
+  snprintf(ret, length + 1, format, day);
+  ret[length] = '\0';
 
   return ret;
 }
 
-string aoc_read(int day, string filename) {
-  char* full_filename = aoc_read_filename(day, filename);
+string aoc_get_input(int day) {
+  char* full_filename = aoc_input_filename(day);
+  if (not full_filename) {
+    return (string){0};
+  }
   FILE* file = fopen(full_filename, "r");
   if (not file) {
     perror(full_filename);

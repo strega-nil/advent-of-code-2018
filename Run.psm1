@@ -1,4 +1,4 @@
-function run([String] $Day) {
+function run([String] $Day, [String] $Part) {
   $dayPath = "day-$Day"
 
   if (-not (Test-Path ".\$dayPath")) {
@@ -19,5 +19,5 @@ function run([String] $Day) {
 
   Write-Host
 
-  & ".\build\$dayPath\$dayPath.exe"
+  & ".\build\$dayPath\$dayPath.exe" $Part
 }

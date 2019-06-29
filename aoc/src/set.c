@@ -1,3 +1,4 @@
+#include <aoc/dynamic_buffer.h>
 #include <aoc/set.h>
 
 #include <stdio.h>
@@ -147,6 +148,7 @@ static void* set_insert_recursive(
       if (not node->left) {
         node->left = new_node(element, element_size);
         node->left->parent = node;
+        ++self->size;
         break;
       } else {
         node = node->left;
@@ -156,6 +158,7 @@ static void* set_insert_recursive(
       if (not node->right) {
         node->right = new_node(element, element_size);
         node->right->parent = node;
+        ++self->size;
         break;
       } else {
         node = node->right;
@@ -261,28 +264,27 @@ void* _Aoc_set_max(set const* self) {
   }
 }
 
-static void for_each_recursive(
-  struct node* n,
-  for_each_t* f,
-  void* thunk
-) {
-  for (;;) {
-    if (not n) {
-      return;
-    }
-
-    for_each_recursive(n->left, f, thunk);
-    f(&n->element, thunk);
-    n = n->right;
-  }
-}
-
 void _Aoc_set_for_each(
   set const* self,
   for_each_t* f,
   void* thunk
 ) {
-  for_each_recursive(self->root, f, thunk);
+  struct node** node_stack = db_new(struct node*);
+  struct node* n = self->root;
+
+  for (;;) {
+    while (n) {
+      db_push(node_stack, n);
+      n = n->left;
+    }
+    if (db_is_empty(node_stack)) {
+      break;
+    }
+
+    n = db_pop(node_stack);
+    f(&n->element, thunk);
+    n = n->right;
+  }
 }
 
 static void free_subtree(struct node* node) {

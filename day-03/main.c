@@ -20,7 +20,9 @@ struct claim parse_claim(string const line) {
     BUFFER_LEN = 64,
   };
 
-  struct claim ret = {-1};
+  struct claim ret = {0};
+  ret.id = -1;
+
   char buffer[BUFFER_LEN] = {0};
 
   if (string_length(line) > BUFFER_LEN - 1) {
@@ -50,20 +52,15 @@ struct claim parse_claim(string const line) {
   return ret;
 }
 
-void do_the_thing(string const data) {
+void do_the_thing(string const data, enum part part) {
   struct claim* claims = db_new(struct claim);
 
-  {
-    struct lines_iterator it = lines_iterator_new(data);
-    while (it.rest.start != it.rest.end) {
-      lines_iterator_next(&it);
-
-      struct claim claim = parse_claim(it.current);
-      if (claim.id == -1) {
-        continue;
-      }
-      db_push(claims, claim);
+  lines_for_each(line, data) {
+    struct claim claim = parse_claim(line);
+    if (claim.id == -1) {
+      continue;
     }
+    db_push(claims, claim);
   }
 
   enum {
@@ -73,37 +70,46 @@ void do_the_thing(string const data) {
   typedef short row[FABRIC_SIZE];
   row* fabric = calloc(FABRIC_SIZE, sizeof(*fabric));
 
-  struct claim const* const claims_end = db_end(claims);
-  for (struct claim const* it = claims; it != claims_end; ++it) {
-    for (int x = it->left; x < it->left + it->width; ++x) {
-      for (int y = it->top; y < it->top + it->height; ++y) {
+  db_for_each(struct claim const, it, claims) {
+    range_for_each(int, y, it->top, it->top + it->height) {
+      range_for_each(int, x, it->left, it->left + it->width) {
         ++fabric[y][x];
       }
     }
   }
 
-  for (struct claim const* it = claims; it != claims_end; ++it) {
-    bool overlapping = false;
-    for (int x = it->left; x < it->left + it->width; ++x) {
-      for (int y = it->top; y < it->top + it->height; ++y) {
-        if (fabric[y][x] > 1) {
-          overlapping = true;
+  switch (part) {
+    case PART_A: {
+      int count = 0;
+      range_for_each(int, y, 0, FABRIC_SIZE) {
+        range_for_each(int, x, 0, FABRIC_SIZE) {
+          if (fabric[y][x] > 1) {
+            ++count;
+          }
         }
       }
-    }
-    if (not overlapping) {
-      printf("Found the claim! ID #%d\n", it->id);
-    }
+      printf("The answer is %d\n", count);
+    } break;
+    case PART_B: {
+      db_for_each(struct claim const, it, claims) {
+        bool overlapping = false;
+        range_for_each(int, y, it->top, it->top + it->height) {
+          range_for_each(int, x, it->left, it->left + it->width) {
+            if (fabric[y][x] > 1) {
+              overlapping = true;
+            }
+          }
+        }
+        if (not overlapping) {
+          printf("Found the claim! ID #%d\n", it->id);
+        }
+      }
+    } break;
   }
+
 
   free(fabric);
   db_free(claims);
 }
 
-int main() {
-  string data = aoc_read(3, S("input.txt"));
-
-  do_the_thing(data);
-
-  return 0;
-}
+DEFINE_MAIN(3)
