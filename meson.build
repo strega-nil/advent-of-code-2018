@@ -3,7 +3,7 @@ project('aoc',
   license: 'Apache-2.0',
   default_options: [
     'werror=true',
-    'warning_level=2',
+    'warning_level=3',
     'c_std=c11',
     'default_library=static',
   ],
@@ -25,3 +25,4 @@ subdir('day-01')
 subdir('day-02')
 subdir('day-03')
 subdir('day-04')
+subdir('day-05')

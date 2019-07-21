@@ -5,6 +5,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+string string_copy(string s) {
+  size_t length = s.end - s.start;
+  string ret;
+
+  if (!s.start) {
+    ret.start = ret.end = NULL;
+  } else {
+    ret.start = malloc(length);
+    ret.end = ret.start + length;
+
+    memcpy(ret.start, s.start, length);
+  }
+
+  return ret;
+}
+
 char* string_to_cstring(string s) {
   size_t length = s.end - s.start;
   char* ret = malloc(length + 1);

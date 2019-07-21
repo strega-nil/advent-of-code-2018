@@ -10,6 +10,7 @@ typedef struct string {
 
 size_t string_length(string s);
 
+string string_copy(string s);
 char* string_to_cstring(string s);
 string string_of_cstring(char const* s);
 
