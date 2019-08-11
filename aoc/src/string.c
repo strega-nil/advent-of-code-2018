@@ -21,9 +21,9 @@ string string_copy(string s) {
   return ret;
 }
 
-char* string_to_cstring(string s) {
+char *string_to_cstring(string s) {
   size_t length = s.end - s.start;
-  char* ret = malloc(length + 1);
+  char *ret = malloc(length + 1);
 
   if (s.start) {
     memcpy(ret, s.start, length);
@@ -32,7 +32,7 @@ char* string_to_cstring(string s) {
   return ret;
 }
 
-string string_of_cstring(char const* s) {
+string string_of_cstring(char const *s) {
   size_t length = strlen(s);
 
   string ret = {0};
@@ -45,8 +45,8 @@ string string_of_cstring(char const* s) {
   ret.end = ret.start + length;
 
   {
-    char* dst;
-    char const* src;
+    char *dst;
+    char const *src;
     for (dst = ret.start, src = s; *src != '\0'; ++dst, ++src) {
       *dst = *src;
     }
@@ -55,9 +55,7 @@ string string_of_cstring(char const* s) {
   return ret;
 }
 
-void string_free(string s) {
-  free(s.start);
-}
+void string_free(string s) { free(s.start); }
 
 struct string_split string_split_at(string s, char ch) {
   string first = {0};
@@ -81,7 +79,7 @@ struct string_split string_split_at(string s, char ch) {
   return ret;
 }
 
-bool _Aoc_lines_iterator_next(string* current, string* rest) {
+bool _Aoc_lines_iterator_next(string *current, string *rest) {
   if (rest->start == rest->end) {
     return false;
   }
@@ -93,13 +91,11 @@ bool _Aoc_lines_iterator_next(string* current, string* rest) {
   return true;
 }
 
-int str_scanf(string s, char const* format, ...) {
-  enum {
-    SMALL_BUFFER_OPT = 64
-  };
+int str_scanf(string s, char const *format, ...) {
+  enum { SMALL_BUFFER_OPT = 64 };
   va_list args;
   char buffer[SMALL_BUFFER_OPT] = {0};
-  char* ptr;
+  char *ptr;
   size_t const length = string_length(s);
   bool const use_small_buffer = length < SMALL_BUFFER_OPT - 1;
 

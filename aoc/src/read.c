@@ -5,11 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char*
-aoc_input_filename(int day) {
-  char* ret = NULL;
+static char *aoc_input_filename(int day) {
+  char *ret = NULL;
 
-  char const* const format = "day-%02d/input.txt";
+  char const *const format = "day-%02d/input.txt";
   size_t const length = snprintf(NULL, 0, format, day);
 
   ret = malloc(length + 1);
@@ -24,11 +23,11 @@ aoc_input_filename(int day) {
 }
 
 string aoc_get_input(int day) {
-  char* full_filename = aoc_input_filename(day);
+  char *full_filename = aoc_input_filename(day);
   if (not full_filename) {
     return (string){0};
   }
-  FILE* file = fopen(full_filename, "r");
+  FILE *file = fopen(full_filename, "r");
   if (not file) {
     perror(full_filename);
     return (string){0};
@@ -36,10 +35,9 @@ string aoc_get_input(int day) {
 
   free(full_filename);
 
-
   size_t length = 32;
-  char* start = malloc(length);
-  char* end = start;
+  char *start = malloc(length);
+  char *end = start;
 
   char buffer[32];
 
@@ -55,7 +53,7 @@ string aoc_get_input(int day) {
       memcpy(end, buffer, 32);
       end += 32;
       if (end == start + length) {
-        char* tmp = malloc(length * 2);
+        char *tmp = malloc(length * 2);
         memcpy(tmp, start, length);
         start = tmp;
         end = start + length;

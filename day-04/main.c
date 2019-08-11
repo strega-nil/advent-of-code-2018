@@ -1,7 +1,7 @@
 #include <aoc/dynamic_buffer.h>
+#include <aoc/read.h>
 #include <aoc/set.h>
 #include <aoc/string.h>
-#include <aoc/read.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,9 +32,9 @@ struct guard {
   int count_of_minutes_asleep[60];
 };
 
-static int int_compare(void const* lhs_, void const* rhs_) {
-  int const* lhs = lhs_;
-  int const* rhs = rhs_;
+static int int_compare(void const *lhs_, void const *rhs_) {
+  int const *lhs = lhs_;
+  int const *rhs = rhs_;
 
   if (*lhs < *rhs) {
     return -1;
@@ -45,18 +45,21 @@ static int int_compare(void const* lhs_, void const* rhs_) {
   }
 }
 
-static int data_entry_compare(void const* lhs_, void const* rhs_) {
-  struct data_entry const* lhs = lhs_;
-  struct data_entry const* rhs = rhs_;
+static int data_entry_compare(void const *lhs_, void const *rhs_) {
+  struct data_entry const *lhs = lhs_;
+  struct data_entry const *rhs = rhs_;
 
   int compare;
 
   compare = int_compare(&lhs->month, &rhs->month);
-  if (compare != 0) return compare;
+  if (compare != 0)
+    return compare;
   compare = int_compare(&lhs->day, &rhs->day);
-  if (compare != 0) return compare;
+  if (compare != 0)
+    return compare;
   compare = int_compare(&lhs->hour, &rhs->hour);
-  if (compare != 0) return compare;
+  if (compare != 0)
+    return compare;
   compare = int_compare(&lhs->minute, &rhs->minute);
   return compare;
 }
@@ -82,33 +85,19 @@ struct data_entry parse_data_entry(string line) {
   memcpy(buffer, sp.first.start, string_length(sp.first));
   // already zero-terminated
 
-  int scanf_result = sscanf(
-    buffer,
-    "[1518-%d-%d %d:%d",
-    &ret.month,
-    &ret.day,
-    &ret.hour,
-    &ret.minute
-  );
+  int scanf_result = sscanf(buffer, "[1518-%d-%d %d:%d", &ret.month, &ret.day,
+                            &ret.hour, &ret.minute);
 
   if (scanf_result < 3) {
-    fprintf(
-      stderr,
-      "invalid date format: %.*s\n",
-      (int)string_length(sp.first),
-      sp.first.start
-    );
+    fprintf(stderr, "invalid date format: %.*s\n", (int)string_length(sp.first),
+            sp.first.start);
     return ret;
   }
 
   memcpy(buffer, sp.rest.start, string_length(sp.rest));
   buffer[string_length(sp.rest)] = '\0';
 
-  scanf_result = sscanf(
-    buffer,
-    " Guard #%d begins shift",
-    &ret.guard_id
-  );
+  scanf_result = sscanf(buffer, " Guard #%d begins shift", &ret.guard_id);
 
   if (scanf_result == 1) {
     ret.kind = ENTRY_START;
@@ -124,24 +113,20 @@ struct data_entry parse_data_entry(string line) {
     return ret;
   }
 
-  fprintf(
-    stderr,
-    "invalid entry format: %.*s",
-    (int)string_length(sp.rest),
-    sp.rest.start
-  );
+  fprintf(stderr, "invalid entry format: %.*s", (int)string_length(sp.rest),
+          sp.rest.start);
   return ret;
 }
 
-static int guard_compare(void const* lhs_, void const* rhs_) {
-  struct guard const* lhs = lhs_;
-  struct guard const* rhs = rhs_;
+static int guard_compare(void const *lhs_, void const *rhs_) {
+  struct guard const *lhs = lhs_;
+  struct guard const *rhs = rhs_;
 
   return int_compare(&lhs->guard_id, &rhs->guard_id);
 }
 
-struct data_entry* get_entries(string data) {
-  struct data_entry* entries = db_new(struct data_entry);
+struct data_entry *get_entries(string data) {
+  struct data_entry *entries = db_new(struct data_entry);
 
   lines_for_each(it, data) {
     struct data_entry entry = parse_data_entry(it);
@@ -152,28 +137,23 @@ struct data_entry* get_entries(string data) {
     db_push(entries, entry);
   }
 
-  qsort(
-    entries,
-    db_length(entries),
-    sizeof(*entries),
-    data_entry_compare
-  );
+  qsort(entries, db_length(entries), sizeof(*entries), data_entry_compare);
 
   return entries;
 }
 
-static void slept_most_total(void* current_, void* max_) {
-  struct guard* current = current_;
-  struct guard* max = max_;
+static void slept_most_total(void *current_, void *max_) {
+  struct guard *current = current_;
+  struct guard *max = max_;
 
   if (current->minutes_asleep > max->minutes_asleep) {
     *max = *current;
   }
 }
 
-static void slept_most_on_minute(void* current_, void* max_) {
-  struct guard* current = current_;
-  struct guard* max = max_;
+static void slept_most_on_minute(void *current_, void *max_) {
+  struct guard *current = current_;
+  struct guard *max = max_;
 
   int old_max = 0;
   int new_max = 0;
@@ -193,13 +173,13 @@ static void slept_most_on_minute(void* current_, void* max_) {
 }
 
 struct guard sleepiest_guard(string data, enum part part) {
-  struct data_entry* entries = get_entries(data);
+  struct data_entry *entries = get_entries(data);
   set guards = set_new(guard_compare);
 
   {
     struct guard tmp_guard = {0};
 
-    struct guard* guard = NULL;
+    struct guard *guard = NULL;
     int sleep_time = -1;
     db_for_each(struct data_entry const, it, entries) {
       if (it->kind == ENTRY_START) {
@@ -243,12 +223,12 @@ struct guard sleepiest_guard(string data, enum part part) {
 
   struct guard max = {0};
   switch (part) {
-    case PART_A:
-      set_for_each(guards, slept_most_total, &max);
-      break;
-    case PART_B:
-      set_for_each(guards, slept_most_on_minute, &max);
-      break;
+  case PART_A:
+    set_for_each(guards, slept_most_total, &max);
+    break;
+  case PART_B:
+    set_for_each(guards, slept_most_on_minute, &max);
+    break;
   }
 
   set_free(guards);
@@ -265,7 +245,7 @@ void do_the_thing(string data, enum part part) {
     int minute = 0;
     int number_of_sleeps = 0;
 
-    range_for_each(size_t, idx, 0,  60) {
+    range_for_each(size_t, idx, 0, 60) {
       if (guard.count_of_minutes_asleep[idx] > number_of_sleeps) {
         minute = (int)idx;
         number_of_sleeps = guard.count_of_minutes_asleep[idx];

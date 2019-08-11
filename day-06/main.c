@@ -42,7 +42,7 @@ typedef struct pair *pair_ptr;
 struct map {
   int right;
   int top;
-  struct pair** buffer;
+  struct pair **buffer;
 };
 
 pair_ptr *index_map(struct map map, int x, int y) {
@@ -78,8 +78,8 @@ struct map make_map(struct pair *list) {
 
   result.buffer = calloc(total_size, sizeof(*result.buffer));
 
-  range_for_each (int, y, 0, result.top) {
-    range_for_each (int, x, 0, result.right) {
+  range_for_each(int, y, 0, result.top) {
+    range_for_each(int, x, 0, result.right) {
       struct pair *closest = NULL;
       int distance = INT_MAX;
       db_for_each(struct pair, pair, list) {
@@ -110,7 +110,7 @@ int calculate_area_of(struct map *map, struct pair *current) {
   //    -y
 
   // if a pair owns an edge, we have an infinite area
-  range_for_each (int, y, 0, map->top) {
+  range_for_each(int, y, 0, map->top) {
     if (*index_map(*map, 0, y) == current) {
       return -1;
     }
@@ -118,7 +118,7 @@ int calculate_area_of(struct map *map, struct pair *current) {
       return -1;
     }
   }
-  range_for_each (int, x, 0, map->right) {
+  range_for_each(int, x, 0, map->right) {
     if (*index_map(*map, x, 0) == current) {
       return -1;
     }
@@ -128,8 +128,8 @@ int calculate_area_of(struct map *map, struct pair *current) {
   }
 
   int area = 0;
-  range_for_each (int, y, 1, map->top - 1) {
-    range_for_each (int, x, 1, map->right - 1) {
+  range_for_each(int, y, 1, map->top - 1) {
+    range_for_each(int, x, 1, map->right - 1) {
       if (*index_map(*map, x, y) == current) {
         ++area;
       }
@@ -143,7 +143,8 @@ struct pair *parse_list(string data) {
   struct pair *result = db_new(struct pair);
 
   lines_for_each(line, data) {
-    if (line.start == line.end) continue;
+    if (line.start == line.end)
+      continue;
     struct pair tmp = parse_pair(line);
     db_push(result, tmp);
   }
@@ -151,7 +152,7 @@ struct pair *parse_list(string data) {
   return result;
 }
 
-void do_part_a(struct pair* pairs) {
+void do_part_a(struct pair *pairs) {
   struct map map = make_map(pairs);
 
   int greatest_area = -1;
@@ -172,7 +173,7 @@ void do_part_a(struct pair* pairs) {
 }
 
 #define SAFE_DISTANCE 10000
-bool within_safe_distance(struct pair* pairs, int x, int y) {
+bool within_safe_distance(struct pair *pairs, int x, int y) {
   int distance = 0;
 
   db_for_each(struct pair, pair, pairs) {
@@ -185,7 +186,7 @@ bool within_safe_distance(struct pair* pairs, int x, int y) {
   return true;
 }
 
-void do_part_b(struct pair* pairs) {
+void do_part_b(struct pair *pairs) {
   int max_x = 0;
   int max_y = 0;
 
@@ -200,20 +201,20 @@ void do_part_b(struct pair* pairs) {
 
   int area = 0;
   range_for_each(int, y, 0, max_y) {
-    range_for_each (int, x, 0, max_x) {
+    range_for_each(int, x, 0, max_x) {
       if (within_safe_distance(pairs, x, y)) {
         ++area;
       }
     }
   }
 
-  printf("Region of safety has area %zd\n", area);
+  printf("Region of safety has area %d\n", area);
 }
 
 void do_the_thing(string data, enum part p) {
   struct pair *pairs = parse_list(data);
 
-  void (*f)(struct pair*) = p ? do_part_a : do_part_b;
+  void (*f)(struct pair *) = p ? do_part_a : do_part_b;
   f(pairs);
 }
 

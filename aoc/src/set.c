@@ -6,15 +6,15 @@
 #include <string.h>
 
 struct node {
-  struct node* parent;
-  struct node* left;
-  struct node* right;
+  struct node *parent;
+  struct node *left;
+  struct node *right;
 
   int height;
   unsigned char element[];
 };
 
-set _Aoc_set_new(compare_t* cmp) {
+set _Aoc_set_new(compare_t *cmp) {
   set ret = {0};
   ret.cmp = cmp;
   return ret;
@@ -24,7 +24,7 @@ set _Aoc_set_new(compare_t* cmp) {
 #define HEIGHT(n) ((n) ? (n)->height : -1)
 
 // returns the height of the node, from its children's heights
-static int calculate_height(struct node const* n) {
+static int calculate_height(struct node const *n) {
   int left_height = HEIGHT(n->left);
   int right_height = HEIGHT(n->right);
   if (left_height > right_height) {
@@ -34,10 +34,10 @@ static int calculate_height(struct node const* n) {
   }
 }
 
-static void left_rotate(set* s, struct node* x) {
-  struct node* parent = x->parent;
-  struct node* y = x->right;
-  struct node* mid = y->left;
+static void left_rotate(set *s, struct node *x) {
+  struct node *parent = x->parent;
+  struct node *y = x->right;
+  struct node *mid = y->left;
 
   // swap y into place under parent
   y->parent = parent;
@@ -64,10 +64,10 @@ static void left_rotate(set* s, struct node* x) {
   y->height = calculate_height(y);
 }
 
-static void right_rotate(set* s, struct node* y) {
-  struct node* parent = y->parent;
-  struct node* x = y->left;
-  struct node* mid = x->right;
+static void right_rotate(set *s, struct node *y) {
+  struct node *parent = y->parent;
+  struct node *x = y->left;
+  struct node *mid = x->right;
 
   // swap x into place under parent
   x->parent = parent;
@@ -94,7 +94,7 @@ static void right_rotate(set* s, struct node* y) {
   x->height = calculate_height(x);
 }
 
-static int balance_of(struct node const* n) {
+static int balance_of(struct node const *n) {
   if (not n) {
     return 0;
   } else {
@@ -102,7 +102,7 @@ static int balance_of(struct node const* n) {
   }
 }
 
-static void rebalance(set* s, struct node* n) {
+static void rebalance(set *s, struct node *n) {
   int balance = balance_of(n);
 
   if (balance < -1) {
@@ -118,8 +118,8 @@ static void rebalance(set* s, struct node* n) {
   }
 }
 
-static struct node* new_node(void const* element, size_t size) {
-  struct node* tmp = malloc(sizeof(*tmp) + size);
+static struct node *new_node(void const *element, size_t size) {
+  struct node *tmp = malloc(sizeof(*tmp) + size);
 
   tmp->height = 0;
   tmp->parent = NULL;
@@ -130,12 +130,8 @@ static struct node* new_node(void const* element, size_t size) {
   return tmp;
 }
 
-static void* set_insert_recursive(
-  set* self,
-  struct node* node,
-  void const* element,
-  size_t element_size
-) {
+static void *set_insert_recursive(set *self, struct node *node,
+                                  void const *element, size_t element_size) {
   // insert - tail recurse on the correct child
   for (;;) {
     int comparison = self->cmp(element, &node->element);
@@ -178,11 +174,7 @@ static void* set_insert_recursive(
   }
 }
 
-void* _Aoc_set_insert(
-  set* self,
-  void const* element,
-  size_t element_size
-) {
+void *_Aoc_set_insert(set *self, void const *element, size_t element_size) {
   if (not self->root) {
     self->root = new_node(element, element_size);
     return NULL;
@@ -207,11 +199,8 @@ bool _Aoc_set_remove(set* self, void const* element) {
 }
 #endif
 
-static void* aoc_set_search_recursive(
-  set const* self,
-  struct node* node,
-  void const* element
-) {
+static void *aoc_set_search_recursive(set const *self, struct node *node,
+                                      void const *element) {
   // tail recurse on correct child
   for (;;) {
     if (not node) {
@@ -230,12 +219,12 @@ static void* aoc_set_search_recursive(
   }
 }
 
-void* _Aoc_set_search(set const* self, void const* element) {
+void *_Aoc_set_search(set const *self, void const *element) {
   return aoc_set_search_recursive(self, self->root, element);
 }
 
-void* _Aoc_set_min(set const* self) {
-  struct node* n = self->root;
+void *_Aoc_set_min(set const *self) {
+  struct node *n = self->root;
   if (n == NULL) {
     return NULL;
   }
@@ -249,8 +238,8 @@ void* _Aoc_set_min(set const* self) {
   }
 }
 
-void* _Aoc_set_max(set const* self) {
-  struct node* n = self->root;
+void *_Aoc_set_max(set const *self) {
+  struct node *n = self->root;
   if (n == NULL) {
     return NULL;
   }
@@ -264,13 +253,9 @@ void* _Aoc_set_max(set const* self) {
   }
 }
 
-void _Aoc_set_for_each(
-  set const* self,
-  for_each_t* f,
-  void* thunk
-) {
-  struct node** node_stack = db_new(struct node*);
-  struct node* n = self->root;
+void _Aoc_set_for_each(set const *self, for_each_t *f, void *thunk) {
+  struct node **node_stack = db_new(struct node *);
+  struct node *n = self->root;
 
   for (;;) {
     while (n) {
@@ -287,7 +272,7 @@ void _Aoc_set_for_each(
   }
 }
 
-static void free_subtree(struct node* node) {
+static void free_subtree(struct node *node) {
   // tail recursion on node->right
   for (;;) {
     if (not node) {
@@ -295,12 +280,10 @@ static void free_subtree(struct node* node) {
     }
 
     free_subtree(node->left);
-    struct node* tmp = node;
+    struct node *tmp = node;
     node = node->right;
     free(tmp);
   }
 }
 
-void _Aoc_set_free(set* self) {
-  free_subtree(self->root);
-}
+void _Aoc_set_free(set *self) { free_subtree(self->root); }

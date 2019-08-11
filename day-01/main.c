@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int int_compare(void const* lhs_, void const* rhs_) {
-  int lhs = *(int const*)lhs_;
-  int rhs = *(int const*)rhs_;
+static int int_compare(void const *lhs_, void const *rhs_) {
+  int lhs = *(int const *)lhs_;
+  int rhs = *(int const *)rhs_;
 
   if (lhs < rhs) {
     return -1;
@@ -23,7 +23,7 @@ static int int_compare(void const* lhs_, void const* rhs_) {
 void do_the_thing(string const data, enum part part) {
   char buffer[32] = {0};
 
-  int* frequency_changes = db_new(int);
+  int *frequency_changes = db_new(int);
 
   int frequency = 0;
   set frequencies = set_new(int_compare);
@@ -58,25 +58,24 @@ void do_the_thing(string const data, enum part part) {
   }
 
   switch (part) {
-    case PART_A:
-      printf("Answer is %d\n", frequency);
-      goto end;
-    case PART_B: {
-      int const* const frequency_changes_end =
-        db_end(frequency_changes);
+  case PART_A:
+    printf("Answer is %d\n", frequency);
+    goto end;
+  case PART_B: {
+    int const *const frequency_changes_end = db_end(frequency_changes);
 
-      for (int const* it = frequency_changes;; ++it) {
-        if (it == frequency_changes_end) {
-          it = frequency_changes;
-        }
+    for (int const *it = frequency_changes;; ++it) {
+      if (it == frequency_changes_end) {
+        it = frequency_changes;
+      }
 
-        frequency += *it;
-        if (set_insert(frequencies, frequency)) {
-          printf("Answer is %d\n", frequency);
-          goto end;
-        }
+      frequency += *it;
+      if (set_insert(frequencies, frequency)) {
+        printf("Answer is %d\n", frequency);
+        goto end;
       }
     }
+  }
   }
 
 end:
