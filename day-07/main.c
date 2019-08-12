@@ -8,7 +8,7 @@
 
 struct step {
   char name;
-  bool finished;
+  bool working;
   char *preconditions;
 };
 
@@ -76,7 +76,7 @@ struct step *make_graph(struct step_relationship *step_relationships) {
     if (not precondition) {
       struct step tmp;
       tmp.name = rel->precondition;
-      tmp.finished = false;
+      tmp.working = false;
       tmp.preconditions = db_new(char);
       db_push(result, tmp);
     }
@@ -85,7 +85,7 @@ struct step *make_graph(struct step_relationship *step_relationships) {
     if (not element) {
       struct step tmp;
       tmp.name = rel->postcondition;
-      tmp.finished = false;
+      tmp.working = false;
       tmp.preconditions = db_new(char);
       db_push(result, tmp);
       element = db_end(result) - 1;
@@ -94,7 +94,7 @@ struct step *make_graph(struct step_relationship *step_relationships) {
     db_push(element->preconditions, rel->precondition);
   }
 
-  qsort(result, db_length(result), sizeof(*result), compare_step);
+  db_sort(result, compare_step);
   return result;
 }
 
@@ -111,11 +111,7 @@ void set_step_done(struct step *graph, char c) {
   }
 }
 
-void do_the_thing(string data, enum part p) {
-  (void)p;
-  struct step_relationship *step_relationships = parse_relationships(data);
-
-  struct step *graph = make_graph(step_relationships);
+void do_part_a(struct step *graph) {
   struct step *finished = db_new(struct step);
 
   for (;;) {
@@ -123,7 +119,7 @@ void do_the_thing(string data, enum part p) {
 
     // already sorted by alphabet -- chooses the first valid step
     db_for_each(struct step, step, graph) {
-      if (db_is_empty(step->preconditions) and not step->finished) {
+      if (db_is_empty(step->preconditions) and not step->working) {
         printf("pushing element: %c\n", step->name);
         available = step;
         break;
@@ -134,7 +130,7 @@ void do_the_thing(string data, enum part p) {
       break;
     } else {
       set_step_done(graph, available->name);
-      available->finished = true;
+      available->working = true;
       db_push(finished, *available);
     }
   }
@@ -142,6 +138,64 @@ void do_the_thing(string data, enum part p) {
   printf("Final order: ");
   db_for_each(struct step, el, finished) { printf("%c", el->name); }
   puts("");
+}
+
+#define MINIMUM_TIME 60
+#define NUM_WORKERS 5
+void do_part_b(struct step *graph) {
+  struct work {
+    struct step *work_unit;
+    int time_left;
+  };
+  struct work *working = db_new(struct work);
+  struct step *finished = db_new(struct step);
+
+  int time = 0;
+  for (;; ++time) {
+    // each loop is one second
+    if (db_length(working) < NUM_WORKERS) {
+      db_for_each(struct step, step, graph) {
+        if (db_is_empty(step->preconditions) and not step->working) {
+          printf("pushing element: %c\n", step->name);
+          struct work tmp;
+          tmp.work_unit = step;
+          tmp.time_left = MINIMUM_TIME + (step->name - 'A') + 1;
+          db_push(working, tmp);
+          if (db_length(working) == NUM_WORKERS) {
+            break;
+          }
+        }
+      }
+    }
+
+    if (db_is_empty(working)) {
+      break;
+    } else {
+      struct work *tmp = db_new(struct work);
+      db_for_each(struct work, work, working) {
+        work->work_unit->working = true;
+        if (work->time_left == 1) {
+          set_step_done(graph, work->work_unit->name);
+          db_push(finished, *work->work_unit);
+        } else {
+          --work->time_left;
+          db_push(tmp, *work);
+        }
+      }
+      db_free(working);
+      working = tmp;
+    }
+  }
+
+  printf("Total time taken: %d", time);
+}
+
+void do_the_thing(string data, enum part p) {
+  struct step_relationship *step_relationships = parse_relationships(data);
+
+  struct step *graph = make_graph(step_relationships);
+
+  (p == PART_A ? do_part_a : do_part_b)(graph);
 }
 
 DEFINE_MAIN(7)

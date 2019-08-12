@@ -2,6 +2,7 @@
 #define AOC_DYNAMIC_BUFFER_H
 
 #include <aoc/utility.h>
+#include <stdlib.h>
 
 size_t _Aoc_dynamic_buffer_length(void const *self);
 size_t _Aoc_dynamic_buffer_capacity(void const *self);
@@ -13,6 +14,8 @@ void _Aoc_dynamic_buffer_decrement_length(void *self);
 void *_Aoc_dynamic_buffer_with_capacity(size_t el_size, size_t capacity);
 
 void _Aoc_dynamic_buffer_clear(void *self);
+
+void _Aoc_dynamic_buffer_remove(void *self, size_t idx, size_t el_size);
 
 void *_Aoc_dynamic_buffer_resize(void *self, size_t el_size, size_t new_cap);
 void *_Aoc_dynamic_buffer_resize_if_at_capacity(void *self, size_t el_size);
@@ -32,8 +35,6 @@ void _Aoc_dynamic_buffer_free(void *self);
   _Aoc_dynamic_buffer_with_capacity(sizeof(type), capacity)
 #define db_free(self) _Aoc_dynamic_buffer_free(self)
 
-#define db_clear(self) _Aoc_dynamic_buffer_clear(self)
-
 #define db_resize(self, cap)                                                   \
   ((self) = _Aoc_dynamic_buffer_resize(self, sizeof(*self), cap))
 
@@ -46,6 +47,11 @@ void _Aoc_dynamic_buffer_free(void *self);
   (_Aoc_dynamic_buffer_decrement_length(self), (self)[db_length(self)])
 
 #define db_set_length(self, length) _Aoc_dynamic_buffer_set_length(self, length)
+#define db_clear(self) db_set_length(self, 0)
+
+#define db_remove(self, i) _Aoc_dynamic_buffer_remove(self, i, sizeof(*self))
+
+#define db_sort(self, cmp) qsort(self, db_length(self), sizeof(*self), cmp)
 
 #define db_for_each(type, name, self)                                          \
   slice_for_each(type, name, self, db_end(self))
