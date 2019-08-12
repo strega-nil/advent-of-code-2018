@@ -11,17 +11,17 @@ if (-not (Test-Path ".\$dayPath")) {
 }
 
 if (-not (Test-Path '.\build')) {
-  meson 'build'
+  cmake -B 'build'
   if (-not $?) {
-    throw 'meson build failed'
+    throw 'configure failed'
   }
 }
 
-ninja -C 'build'
+cmake --build 'build'
 if (-not $?) {
-  throw 'ninja build failed'
+  throw 'build failed'
 }
 
 Write-Host
 
-& ".\build\$dayPath\$dayPath.exe" $Part
+& ".\build\$dayPath.exe" $Part
