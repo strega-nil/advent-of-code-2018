@@ -35,3 +35,12 @@ foreach(day ${days})
 	target_link_libraries(${day} aoc)
 	set_options(${day})
 endforeach()
+
+find_program(CLANG_FORMAT clang-format)
+if (CLANG_FORMAT)
+	file(GLOB_RECURSE format_sources CONFIGURE_DEPENDS
+		aoc/*.c
+		aoc/*.h
+		day-*/*.c)
+	add_custom_target(format COMMAND ${CLANG_FORMAT} -i -verbose ${format_sources})
+endif()

@@ -1,0 +1,13 @@
+BasedOnStyle: LLVM
+
+PointerAlignment: Left
+
+AlignAfterOpenBracket: AlwaysBreak
+BinPackArguments: false
+BinPackParameters: false
+
+BreakStringLiterals: false
+ColumnLimit: 72
+IndentWidth: 2
+TabWidth: 2
+UseTab: Always
