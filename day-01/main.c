@@ -20,7 +20,7 @@ static int int_compare(void const* lhs_, void const* rhs_) {
 	}
 }
 
-void do_the_thing(string const data, enum part part) {
+static void do_the_thing(string const data, enum part part) {
 	char buffer[32] = {0};
 
 	int* frequency_changes = db_new(int);

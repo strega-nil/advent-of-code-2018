@@ -18,7 +18,7 @@ struct step_relationship {
 	char postcondition;
 };
 
-struct step_relationship* parse_relationships(string data) {
+static struct step_relationship* parse_relationships(string data) {
 	struct step_relationship* result = db_new(struct step_relationship);
 	struct step_relationship tmp;
 
@@ -52,7 +52,7 @@ struct step_relationship* parse_relationships(string data) {
 	return result;
 }
 
-struct step* find_element(struct step* graph, char c) {
+static struct step* find_element(struct step* graph, char c) {
 	db_for_each(struct step, el, graph) {
 		if (el->name == c) {
 			return el;
@@ -62,7 +62,7 @@ struct step* find_element(struct step* graph, char c) {
 	return NULL;
 }
 
-int compare_step(void const* lhs_, void const* rhs_) {
+static int compare_step(void const* lhs_, void const* rhs_) {
 	struct step const* lhs = lhs_;
 	struct step const* rhs = rhs_;
 
@@ -75,7 +75,7 @@ int compare_step(void const* lhs_, void const* rhs_) {
 	}
 }
 
-struct step* make_graph(struct step_relationship* step_relationships) {
+static struct step* make_graph(struct step_relationship* step_relationships) {
 	struct step* result = db_new(struct step);
 
 	db_for_each(struct step_relationship, rel, step_relationships) {
@@ -105,7 +105,7 @@ struct step* make_graph(struct step_relationship* step_relationships) {
 	return result;
 }
 
-void set_step_done(struct step* graph, char c) {
+static void set_step_done(struct step* graph, char c) {
 	db_for_each(struct step, step, graph) {
 		char* new_preconditions = db_new(char);
 		db_for_each(char, precondition, step->preconditions) {
@@ -118,7 +118,7 @@ void set_step_done(struct step* graph, char c) {
 	}
 }
 
-void do_part_a(struct step* graph) {
+static void do_part_a(struct step* graph) {
 	struct step* finished = db_new(struct step);
 
 	for (;;) {
@@ -149,7 +149,7 @@ void do_part_a(struct step* graph) {
 
 #define MINIMUM_TIME 60
 #define NUM_WORKERS 5
-void do_part_b(struct step* graph) {
+static void do_part_b(struct step* graph) {
 	struct work {
 		struct step* work_unit;
 		int time_left;
@@ -197,7 +197,7 @@ void do_part_b(struct step* graph) {
 	printf("Total time taken: %d", time);
 }
 
-void do_the_thing(string data, enum part p) {
+static void do_the_thing(string data, enum part p) {
 	struct step_relationship* step_relationships =
 			parse_relationships(data);
 

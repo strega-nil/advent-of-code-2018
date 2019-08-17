@@ -17,7 +17,7 @@ struct player {
 	uint64_t score;
 };
 
-struct marble* insert_marble(
+static struct marble* insert_marble(
 		struct marble* current, struct player* current_player, int number) {
 
 	if (number % 23 != 0) {
@@ -48,7 +48,7 @@ struct marble* insert_marble(
 	}
 }
 
-void do_the_thing(string data, enum part p) {
+static void do_the_thing(string data, enum part p) {
 	(void)p;
 
 	struct marble* current = malloc(sizeof(*current));

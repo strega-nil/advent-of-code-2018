@@ -137,7 +137,7 @@ static int guard_compare(void const* lhs_, void const* rhs_) {
 	return int_compare(&lhs->guard_id, &rhs->guard_id);
 }
 
-struct data_entry* get_entries(string data) {
+static struct data_entry* get_entries(string data) {
 	struct data_entry* entries = db_new(struct data_entry);
 
 	string_lines_for_each(it, data) {
@@ -188,7 +188,7 @@ static void slept_most_on_minute(void* current_, void* max_) {
 	}
 }
 
-struct guard sleepiest_guard(string data, enum part part) {
+static struct guard sleepiest_guard(string data, enum part part) {
 	struct data_entry* entries = get_entries(data);
 	set guards = set_new(guard_compare);
 
@@ -252,7 +252,7 @@ struct guard sleepiest_guard(string data, enum part part) {
 	return max;
 }
 
-void do_the_thing(string data, enum part part) {
+static void do_the_thing(string data, enum part part) {
 	struct guard guard = sleepiest_guard(data, part);
 
 	printf("The sleepiest guard is #%d\n", guard.guard_id);

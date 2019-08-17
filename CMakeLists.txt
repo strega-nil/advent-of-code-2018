@@ -19,8 +19,8 @@ function(set_options target)
 	target_compile_features(${target} PRIVATE c_std_11)
 endfunction()
 
-file(GLOB_RECURSE aoc_sources CONFIGURE_DEPENDS aoc/src/*.c)
-add_library(aoc STATIC ${aoc_sources})
+file(GLOB_RECURSE aoc_sources CONFIGURE_DEPENDS aoc/src/*.c day-*/*.c)
+add_executable(aoc ${aoc_sources})
 target_include_directories(aoc PUBLIC aoc/include)
 set_options(aoc)
 
@@ -29,12 +29,20 @@ file(GLOB days
 	RELATIVE ${CMAKE_SOURCE_DIR}
 	day-*)
 
-foreach(day ${days})
-	file(GLOB_RECURSE ${day}_sources ${day}/*.c)
-	add_executable(${day} ${${day}_sources})
-	target_link_libraries(${day} aoc)
-	set_options(${day})
+list(LENGTH days num_days)
+
+set(define_num_days "static size_t const num_days = ${num_days}\\\\;")
+set(define_days_type "typedef void (*day_t)(string, enum part)\\\\;")
+set(define_days_array "static day_t days[${num_days}]\\\\;")
+
+foreach(day RANGE 1 ${num_days})
+	set(define_days "${define_days} extern day_t const day_${day}\\\\;")
+	set(define_initialize_days "${define_initialize_days}days[${day}] = day_${day}\\\\;")
 endforeach()
+
+target_compile_definitions(aoc PRIVATE
+	DECLARE_DAYS=${define_num_days}${define_days_type}${define_days}${define_days_array}
+	INITIALIZE_DAYS=${define_initialize_days})
 
 find_program(CLANG_FORMAT clang-format)
 if (CLANG_FORMAT)

@@ -15,7 +15,7 @@ struct claim {
 };
 
 // returns {id = -1, ...} on error
-struct claim parse_claim(string const line) {
+static struct claim parse_claim(string const line) {
 	enum {
 		BUFFER_LEN = 64,
 	};
@@ -54,7 +54,7 @@ struct claim parse_claim(string const line) {
 	return ret;
 }
 
-void do_the_thing(string const data, enum part part) {
+static void do_the_thing(string const data, enum part part) {
 	struct claim* claims = db_new(struct claim);
 
 	string_lines_for_each(line, data) {

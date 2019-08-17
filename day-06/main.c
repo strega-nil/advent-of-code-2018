@@ -13,7 +13,7 @@ struct pair {
 	int y;
 };
 
-struct pair parse_pair(string line) {
+static struct pair parse_pair(string line) {
 	char buffer[64];
 
 	size_t const length = string_length(line);
@@ -45,19 +45,19 @@ struct map {
 	struct pair** buffer;
 };
 
-pair_ptr* index_map(struct map map, int x, int y) {
+static pair_ptr* index_map(struct map map, int x, int y) {
 	int const width = map.right;
 	return &map.buffer[width * y + x];
 }
 
-int calculate_distance(struct pair pair, int x, int y) {
+static int calculate_distance(struct pair pair, int x, int y) {
 	int const x_dist = abs(x - pair.x);
 	int const y_dist = abs(y - pair.y);
 
 	return x_dist + y_dist;
 }
 
-struct map make_map(struct pair* list) {
+static struct map make_map(struct pair* list) {
 	if (db_is_empty(list)) {
 		fprintf(stderr, "make_map() doesn't work on empty lists\n");
 		abort();
@@ -101,7 +101,7 @@ struct map make_map(struct pair* list) {
 }
 
 // returns -1 on infinite area
-int calculate_area_of(struct map* map, struct pair* current) {
+static int calculate_area_of(struct map* map, struct pair* current) {
 	// assume a board which is shaped like:
 	//    +y
 	//     |
@@ -139,7 +139,7 @@ int calculate_area_of(struct map* map, struct pair* current) {
 	return area;
 }
 
-struct pair* parse_list(string data) {
+static struct pair* parse_list(string data) {
 	struct pair* result = db_new(struct pair);
 
 	string_lines_for_each(line, data) {
@@ -152,7 +152,7 @@ struct pair* parse_list(string data) {
 	return result;
 }
 
-void do_part_a(struct pair* pairs) {
+static void do_part_a(struct pair* pairs) {
 	struct map map = make_map(pairs);
 
 	int greatest_area = -1;
@@ -180,7 +180,7 @@ void do_part_a(struct pair* pairs) {
 }
 
 #define SAFE_DISTANCE 10000
-bool within_safe_distance(struct pair* pairs, int x, int y) {
+static bool within_safe_distance(struct pair* pairs, int x, int y) {
 	int distance = 0;
 
 	db_for_each(struct pair, pair, pairs) {
@@ -193,7 +193,7 @@ bool within_safe_distance(struct pair* pairs, int x, int y) {
 	return true;
 }
 
-void do_part_b(struct pair* pairs) {
+static void do_part_b(struct pair* pairs) {
 	int max_x = 0;
 	int max_y = 0;
 
@@ -218,7 +218,7 @@ void do_part_b(struct pair* pairs) {
 	printf("Region of safety has area %d\n", area);
 }
 
-void do_the_thing(string data, enum part p) {
+static void do_the_thing(string data, enum part p) {
 	struct pair* pairs = parse_list(data);
 
 	void (*f)(struct pair*) = p ? do_part_a : do_part_b;

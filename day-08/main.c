@@ -46,7 +46,7 @@ struct parse_node_result {
 	int const* new_it;
 };
 
-struct parse_node_result parse_node(int const* it) {
+static struct parse_node_result parse_node(int const* it) {
 	int child_node_count = *it++;
 	CHECK(child_node_count != -1);
 	int metadata_count = *it++;
@@ -73,7 +73,7 @@ struct parse_node_result parse_node(int const* it) {
 	return result;
 }
 
-int sum_metadata(struct node const* node) {
+static int sum_metadata(struct node const* node) {
 	int sum = 0;
 
 	db_for_each(int, meta, node->metadata) { sum += *meta; }
@@ -84,7 +84,7 @@ int sum_metadata(struct node const* node) {
 	return sum;
 }
 
-int node_value(struct node const* node) {
+static int node_value(struct node const* node) {
 	if (db_is_empty(node->children)) {
 		int sum = 0;
 		db_for_each(int, meta, node->metadata) { sum += *meta; }
@@ -104,7 +104,7 @@ int node_value(struct node const* node) {
 	}
 }
 
-void do_the_thing(string data, enum part p) {
+static void do_the_thing(string data, enum part p) {
 	(void)p;
 
 	int* numbers = parse_int_list(data);

@@ -11,7 +11,7 @@ struct value_of_return {
 	bool has_three;
 };
 
-struct value_of_return value_of(string s) {
+static struct value_of_return value_of(string s) {
 	int buffer[26] = {0};
 
 	struct value_of_return ret = {0};
@@ -42,7 +42,7 @@ struct value_of_return value_of(string s) {
 	return ret;
 }
 
-bool are_close(string s1, string s2) {
+static bool are_close(string s1, string s2) {
 	size_t const length = string_length(s1);
 	if (length != string_length(s2)) {
 		return false;
@@ -61,7 +61,7 @@ bool are_close(string s1, string s2) {
 	return true;
 }
 
-void find_solution_for_a(string* buffer) {
+static void find_solution_for_a(string* buffer) {
 	int num_twos = 0;
 	int num_threes = 0;
 
@@ -73,7 +73,7 @@ void find_solution_for_a(string* buffer) {
 	printf("Answer is %d\n", num_twos * num_threes);
 }
 
-void print_difference_of_strings(string s1, string s2) {
+static void print_difference_of_strings(string s1, string s2) {
 	size_t const length = string_length(s1);
 
 	if (length != string_length(s2)) {
@@ -101,7 +101,7 @@ void print_difference_of_strings(string s1, string s2) {
 	free(buffer);
 }
 
-void find_solution_for_b(string* buffer) {
+static void find_solution_for_b(string* buffer) {
 	string const* const buffer_end = db_end(buffer);
 	slice_for_each(string const, a, buffer, buffer_end) {
 		slice_for_each(string const, b, a + 1, buffer_end) {
@@ -115,7 +115,7 @@ void find_solution_for_b(string* buffer) {
 	fprintf(stderr, "not found!\n");
 }
 
-void do_the_thing(string data, enum part part) {
+static void do_the_thing(string data, enum part part) {
 	string* line_buffer = db_new(string);
 
 	string_lines_for_each(line, data) {

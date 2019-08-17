@@ -16,28 +16,8 @@ enum part {
 	PART_B,
 };
 
-#define DEFINE_MAIN(number)                                            \
-	int main(int argc, char** argv) {                                    \
-		if (argc < 2) {                                                    \
-			fprintf(stderr, "choose part a or b\n");                         \
-			return 1;                                                        \
-		}                                                                  \
-		enum part part;                                                    \
-		if (strcmp(argv[1], "a") == 0) {                                   \
-			part = PART_A;                                                   \
-		} else if (strcmp(argv[1], "b") == 0) {                            \
-			part = PART_B;                                                   \
-		} else {                                                           \
-			fprintf(stderr, "invalid part: %s\n", argv[1]);                  \
-			return 1;                                                        \
-		}                                                                  \
-		string data = aoc_get_input((number));                             \
-		if (not data.start) {                                              \
-			return 1;                                                        \
-		}                                                                  \
-		do_the_thing(data, part);                                          \
-		return 0;                                                          \
-	}
+#define DEFINE_MAIN(number) \
+	void (*day_ ## number)(string, enum part) = do_the_thing;
 
 #define array_size(self) (sizeof(self) / sizeof(self[0]))
 
