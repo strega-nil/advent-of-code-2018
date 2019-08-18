@@ -39,6 +39,16 @@ enum part {
 		return 0;                                                          \
 	}
 
+#define DEFINE_MAIN_NOPART(number)                                     \
+	int main() {                                                         \
+		string data = aoc_get_input((number));                             \
+		if (not data.start) {                                              \
+			return 1;                                                        \
+		}                                                                  \
+		do_the_thing(data);                                                \
+		return 0;                                                          \
+	}
+
 #define array_size(self) (sizeof(self) / sizeof(self[0]))
 
 #define range_for_each(type, name, start, end)                         \
