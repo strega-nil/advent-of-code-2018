@@ -37,8 +37,6 @@ int str_scanf(string s, char const* fmt, ...)
 #define S(...) string_of_cstring(__VA_ARGS__)
 #define string_format_arg(s) (int)(string_length(s)), (s).start
 #define string_length(s) ((size_t)((s).end - (s).start))
-#define string_for_each(name, self)                                    \
-	slice_for_each(char, name, s.start, s.end)
 #define string_lines_for_each(name, data)                              \
 	for (string name = {0}, __##name##_rest = (data);                    \
 			 _Aoc_string_lines_iterator_next(&name, &(__##name##_rest));)

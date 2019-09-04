@@ -16,7 +16,7 @@ struct value_of_return value_of(string s) {
 
 	struct value_of_return ret = {0};
 
-	string_for_each(it, s) {
+	for (char* it = s.start; it != s.end; ++it) {
 		int index = *it - 'a';
 		if (0 <= index and index < 26) {
 			++buffer[index];
